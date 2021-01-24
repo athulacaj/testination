@@ -45,6 +45,8 @@ class QuestionAnswersProvider extends ChangeNotifier {
   }
 
   void totalNoOfAnswersList(int totalNo) {
+    answeredList = [];
+    markedList = [];
     for (int i = 0; i < totalNo; i++) {
       int timeSpend;
       if (i == 0) {

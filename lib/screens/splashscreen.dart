@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
-import 'package:testination/homeScreen/homeScreen.dart';
+import 'package:testination/homeScreen/home.dart';
 import 'package:testination/provider/account.dart';
 
 import 'auth/phoneAuth/login.dart';

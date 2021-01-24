@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boom_menu/flutter_boom_menu.dart';
 import 'package:provider/provider.dart';
-import 'package:testination/homeScreen/homeScreen.dart';
+import 'package:testination/homeScreen/home.dart';
 import 'package:testination/screens/mockeTest/QuestionsPage/supporters/timeConvertor.dart';
 
 import '../../qusetionAnswerProvider.dart';
+import 'individualSolutions.dart';
 
 class Solutions extends StatefulWidget {
   final Map solutionDetails;
@@ -109,80 +110,92 @@ class _SolutionsState extends State<Solutions> {
 
 Widget sortQuestions(String title, ThemeData theme, BuildContext context, int i,
     Map qMap, Map aMap) {
-  Widget toReturn = Container(
-    color: theme.backgroundColor.withOpacity(0.8),
-    margin: EdgeInsets.only(bottom: 3),
-    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 0),
-    child: Stack(
-      children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: 22),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Q${i + 1}',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: qMap['isCorrect'] == true
-                            ? Colors.green
-                            : qMap['isCorrect'] == false
-                                ? Colors.redAccent
-                                : theme.accentColor),
-                  ),
-                  Expanded(
-                      child: Text(
-                    ': ${qMap['question']}',
-                    style: TextStyle(fontSize: 16),
-                  )),
-                ],
+  Widget toReturn = GestureDetector(
+    onTap: () async {
+      Size size = MediaQuery.of(context).size;
+      String newSltn = await imageLinkConvert(qMap['solution'], size);
+      print(newSltn);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => IndividualSolution(sltn: newSltn)));
+    },
+    child: Container(
+      color: theme.backgroundColor.withOpacity(0.8),
+      margin: EdgeInsets.only(bottom: 3),
+      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 0),
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 22),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Q${i + 1}',
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: qMap['isCorrect'] == true
+                              ? Colors.green
+                              : qMap['isCorrect'] == false
+                                  ? Colors.redAccent
+                                  : theme.accentColor),
+                    ),
+                    Expanded(
+                        child: Text(
+                      ': ${qMap['question']}',
+                      style: TextStyle(fontSize: 16),
+                    )),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 15),
-            Row(
-              children: <Widget>[
-                Icon(Icons.vpn_key, size: 10),
-                SizedBox(width: 5),
-                Expanded(
-                  child: Material(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 28, top: 8, bottom: 4),
-                      child: Text(
-                        '${qMap['options'][qMap['answerIndex']]}',
-                        style: TextStyle(fontSize: 16),
+              SizedBox(height: 15),
+              Row(
+                children: <Widget>[
+                  Icon(Icons.vpn_key, size: 10),
+                  SizedBox(width: 5),
+                  Expanded(
+                    child: Material(
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(left: 28, top: 8, bottom: 4),
+                        child: Text(
+                          '${qMap['options'][qMap['answerIndex']]}',
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 12),
-          ],
-        ),
-        Positioned(
-          right: 0,
-          child: SizedBox(
-            width: 55,
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.access_time,
-                  color: theme.accentColor.withOpacity(0.2),
-                ),
-                Spacer(),
-                Text('${timeConvertor(qMap['timeSpend'] * 1.0)}'),
-              ],
+                ],
+              ),
+              SizedBox(height: 12),
+            ],
+          ),
+          Positioned(
+            right: 0,
+            child: SizedBox(
+              width: 55,
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.access_time,
+                    color: theme.accentColor.withOpacity(0.2),
+                  ),
+                  Spacer(),
+                  Text('${timeConvertor(qMap['timeSpend'] * 1.0)}'),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
+
   if (title.toLowerCase() == 'all') {
     return toReturn;
   }

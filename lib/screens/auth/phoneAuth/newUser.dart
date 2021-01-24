@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
-import 'package:testination/homeScreen/homeScreen.dart';
+import 'package:testination/homeScreen/home.dart';
 import 'package:testination/provider/account.dart';
 import 'package:testination/screens/auth/ExtractedButton.dart';
 import 'package:testination/screens/auth/constants.dart';

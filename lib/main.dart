@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:testination/homeScreen/homeScreen.dart';
+import 'package:testination/homeScreen/home.dart';
 import 'package:testination/provider/userEventsProvider.dart';
 import 'package:testination/screens/mockeTest/QuestionsPage/qusetionAnswerProvider.dart';
 import 'package:testination/screens/splashscreen.dart';

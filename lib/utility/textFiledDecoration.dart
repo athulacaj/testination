@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:testination/homeScreen/homeScreen.dart';
+import 'package:testination/homeScreen/home.dart';
 
 InputDecoration textFieldDecoration = InputDecoration(
     border:

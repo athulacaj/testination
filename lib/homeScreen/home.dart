@@ -15,6 +15,7 @@ import 'package:testination/provider/userEventsProvider.dart';
 import 'package:testination/screens/closedRoom/closedRoom.dart';
 import 'package:testination/screens/openRoom/openRoom.dart';
 import 'extracted/extractedContainer.dart';
+import 'package:testination/demoNotes.dart';
 
 ThemeData theme;
 bool _showSpinner = false;
@@ -248,10 +249,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               onClick: () async {
 //                                setClosedRoom();
 //                                addTestingAdminToRaceToUpsc();
+//                                 Navigator.push(
+//                                     context,
+//                                     MaterialPageRoute(
+//                                         builder: (context) => DevTools()));
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => DevTools()));
+                                        builder: (context) => DemoNotes()));
                                 // testingAddRaceToUpsc();
                               },
                             ),
