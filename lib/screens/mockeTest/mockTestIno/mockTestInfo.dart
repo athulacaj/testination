@@ -100,7 +100,7 @@ class _MockTestInfoState extends State<MockTestInfo>
           SizedBox(height: 5),
           Container(
 //            color: Colors.white,
-            height: 465,
+            height: MediaQuery.of(context).size.height - 135,
             child: TabBarView(
 //              physics: NeverScrollableScrollPhysics(),
               controller: _tabController,

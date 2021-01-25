@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tex/flutter_tex.dart';
 import 'package:provider/provider.dart';
 import 'package:testination/screens/mockeTest/QuestionsPage/qusetionAnswerProvider.dart';
 
@@ -22,6 +23,8 @@ class _OptionsState extends State<Options> {
   }
 
   bool fromOptionButton = false;
+  final TeXViewRenderingEngine renderingEngine =
+      const TeXViewRenderingEngine.katex();
   @override
   void dispose() {
     super.dispose();
@@ -59,43 +62,66 @@ class _OptionsState extends State<Options> {
                       }
                       return Container(
                         margin: EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          children: <Widget>[
-//                      optionSelected != i
-//                          ? Icon(Icons.check_box_outline_blank,
-//                              color: Colors.black, size: 30)
-//                          : Icon(Icons.check_box,
-//                              size: 30, color: theme.buttonColor),
-//                      SizedBox(width: 10),
-                            Material(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              elevation: 2,
-                              color: optionSelected == i
-                                  ? theme.buttonColor.withOpacity(0.95)
-                                  : null,
-                              child: AnimatedContainer(
-                                width: MediaQuery.of(context).size.width - 42,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 15, horizontal: 6),
-                                duration: Duration(milliseconds: 200),
-                                child: Text(
-                                  '${widget.options[i]}',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: optionSelected == i
-                                          ? Colors.white
-                                          : null),
-                                ),
-                                decoration: BoxDecoration(
-                                    color: optionSelected == i
-                                        ? theme.buttonColor.withOpacity(0.95)
-                                        : null,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                              ),
-                            ),
-                          ],
+                        child: Material(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          elevation: 2,
+                          color: optionSelected == i
+                              ? theme.buttonColor.withOpacity(0.95)
+                              : null,
+                          child: AnimatedContainer(
+                            width: MediaQuery.of(context).size.width - 42,
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 6),
+                            duration: Duration(milliseconds: 200),
+                            child: isHtml(widget.options[i])
+                                ? TeXView(
+                                    onClicked: () {
+                                      if (i == selectedIndex) {
+                                        selectedIndex = -1;
+                                      } else {
+                                        selectedIndex = i;
+                                      }
+                                      Provider.of<QuestionAnswersProvider>(
+                                              context,
+                                              listen: false)
+                                          .addOptionToAnswerList(
+                                              optionSelected: selectedIndex);
+                                      setState(() {});
+                                    },
+                                    isOnclickFunctionAvailable: true,
+                                    renderingEngine: renderingEngine,
+                                    child: TeXViewContainer(
+                                      style: TeXViewStyle(
+                                          contentColor: theme.accentColor,
+                                          backgroundColor: optionSelected == i
+                                              ? theme.buttonColor
+                                                  .withOpacity(0.95)
+                                              : theme.backgroundColor
+                                                  .withOpacity(0.01)),
+                                      child: TeXViewDocument(widget.options[i],
+                                          style: TeXViewStyle(
+                                              fontStyle: TeXViewFontStyle(
+                                            fontSize: 16,
+                                            sizeUnit: TeXViewSizeUnit.Pixels,
+                                            // fontFamily: GoogleFonts.akronim().fontFamily,
+                                          ))),
+                                    ),
+                                  )
+                                : Text(
+                                    '${widget.options[i]}',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: optionSelected == i
+                                            ? Colors.white
+                                            : null),
+                                  ),
+                            decoration: BoxDecoration(
+                                color: optionSelected == i
+                                    ? theme.buttonColor.withOpacity(0.95)
+                                    : null,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                          ),
                         ),
                       );
                     },
@@ -106,4 +132,15 @@ class _OptionsState extends State<Options> {
           : null,
     );
   }
+}
+
+bool isHtml(String text) {
+  if (text.contains(r'$$') ||
+      text.contains(r'\(') ||
+      text.contains(r'</') ||
+      text.contains(r'<img src=')) {
+    print("html");
+    return true;
+  }
+  return false;
 }

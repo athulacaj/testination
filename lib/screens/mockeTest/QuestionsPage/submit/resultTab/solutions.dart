@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boom_menu/flutter_boom_menu.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
-import 'package:testination/homeScreen/home.dart';
 import 'package:testination/screens/mockeTest/QuestionsPage/supporters/timeConvertor.dart';
 
 import '../../qusetionAnswerProvider.dart';
@@ -16,11 +16,13 @@ class Solutions extends StatefulWidget {
 }
 
 String filter = 'all';
+bool _showSpinner = false;
 
 class _SolutionsState extends State<Solutions> {
   @override
   void initState() {
     filter = 'all';
+    _showSpinner = false;
     super.initState();
   }
 
@@ -33,92 +35,105 @@ class _SolutionsState extends State<Solutions> {
     List questionsAndAnswers = widget.solutionDetails['solutionDetails'];
     print(questionsAndAnswers);
     ThemeData theme = Theme.of(context);
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Container(
-            child: SafeArea(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                height: 50,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        GestureDetector(
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            size: 30,
+    return ModalProgressHUD(
+      inAsyncCall: _showSpinner,
+      child: Scaffold(
+        body: Column(
+          children: <Widget>[
+            Container(
+              child: SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  height: 50,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          GestureDetector(
+                            child: Icon(
+                              Icons.arrow_back_ios,
+                              size: 30,
+                            ),
+                            onTap: () async {
+                              Navigator.pop(context);
+                            },
                           ),
-                          onTap: () async {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        SizedBox(width: 20),
-                        Text(
-                          'Solutions ',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        Spacer(),
-                        SizedBox(width: 30),
-                      ],
-                    ),
-                  ],
+                          SizedBox(width: 20),
+                          Text(
+                            'Solutions ',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          Spacer(),
+                          SizedBox(width: 30),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
+              color: theme.backgroundColor,
             ),
-            color: theme.backgroundColor,
-          ),
-          SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.only(right: 10, left: 10, bottom: 70),
-              itemCount: questionsAndAnswers.length,
-              itemBuilder: (BuildContext context, int i) {
-                Map qMap = questionsAndAnswers[i];
-                Map aMap = answeredList[i];
-                return sortQuestions(filter, theme, context, i, qMap, aMap);
-              },
-            ),
-          )
-        ],
-      ),
-      floatingActionButton: BoomMenu(
-        backgroundColor: theme.buttonColor,
-        animatedIcon: AnimatedIcons.menu_close,
-        animatedIconTheme: IconThemeData(size: 22.0),
-        onOpen: () => print('OPENING DIAL'),
-        onClose: () {
-          setState(() {});
-        },
+            SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.only(right: 10, left: 10, bottom: 70),
+                itemCount: questionsAndAnswers.length,
+                itemBuilder: (BuildContext context, int i) {
+                  Map qMap = questionsAndAnswers[i];
+                  Map aMap = answeredList[i];
+                  return sortQuestions(filter, theme, context, i, qMap, aMap,
+                      () {
+                    setState(() {});
+                  });
+                },
+              ),
+            )
+          ],
+        ),
+        floatingActionButton: BoomMenu(
+          backgroundColor: theme.buttonColor,
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: IconThemeData(size: 22.0),
+          onOpen: () => print('OPENING DIAL'),
+          onClose: () {
+            setState(() {});
+          },
 //        scrollVisible: scrollVisible,
-        overlayColor: Colors.black,
-        overlayOpacity: 0.7,
-        children: [
-          buildMenuItem(context, 'all'),
-          buildMenuItem(context, 'Wrong'),
-          buildMenuItem(context, 'Correct'),
-          buildMenuItem(context, 'Not Answered'),
-          buildMenuItem(context, 'Guessed'),
-        ],
+          overlayColor: Colors.black,
+          overlayOpacity: 0.7,
+          children: [
+            buildMenuItem(context, 'all'),
+            buildMenuItem(context, 'Wrong'),
+            buildMenuItem(context, 'Correct'),
+            buildMenuItem(context, 'Not Answered'),
+            buildMenuItem(context, 'Guessed'),
+          ],
+        ),
       ),
     );
   }
 }
 
 Widget sortQuestions(String title, ThemeData theme, BuildContext context, int i,
-    Map qMap, Map aMap) {
+    Map qMap, Map aMap, Function setSTATE) {
   Widget toReturn = GestureDetector(
     onTap: () async {
+      _showSpinner = true;
+      setSTATE();
       Size size = MediaQuery.of(context).size;
-      String newSltn = await imageLinkConvert(qMap['solution'], size);
-      print(newSltn);
+      String newSltn = '';
+      if (qMap['solution'] != null) {
+        newSltn = await imageLinkConvert(qMap['solution'], size);
+        print(newSltn);
+      }
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => IndividualSolution(sltn: newSltn)));
+      _showSpinner = false;
+      setSTATE();
     },
     child: Container(
       color: theme.backgroundColor.withOpacity(0.8),

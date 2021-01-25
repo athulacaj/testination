@@ -1,6 +1,6 @@
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter_tex/flutter_tex.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:google_fonts/google_fonts.dart';
 
 Future<String> imageLinkConvert(String notes, Size size) async {
@@ -74,8 +74,7 @@ class IndividualSolution extends StatefulWidget {
 
 class _IndividualSolutionState extends State<IndividualSolution> {
   final TeXViewRenderingEngine renderingEngine =
-      const TeXViewRenderingEngine.mathjax();
-
+      const TeXViewRenderingEngine.katex();
   String solution = '';
   @override
   void initState() {
@@ -120,10 +119,12 @@ class _IndividualSolutionState extends State<IndividualSolution> {
                         TeXViewDocument(widget.sltn,
                             style: TeXViewStyle(
                                 fontStyle: TeXViewFontStyle(
-                              fontSize: 16,
-                              sizeUnit: TeXViewSizeUnit.Pixels,
-                              // fontFamily: GoogleFonts.akronim().fontFamily,
-                            ))),
+                                    fontSize: 18,
+                                    fontFamily: GoogleFonts.roboto().fontFamily,
+                                    sizeUnit: TeXViewSizeUnit.Pixels,
+                                    fontWeight: TeXViewFontWeight.w300
+                                    // fontFamily: GoogleFonts.akronim().fontFamily,
+                                    ))),
                       ]),
                 ),
                 // style: TeXViewStyle(height: (size.height + 2500).toInt()),

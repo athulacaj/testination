@@ -30,6 +30,12 @@ bool _showSpinner = false;
 
 class _TestPageState extends State<TestPage> {
   @override
+  void initState() {
+    _showSpinner = false;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     ThemeData _theme = Theme.of(context);
     return ModalProgressHUD(

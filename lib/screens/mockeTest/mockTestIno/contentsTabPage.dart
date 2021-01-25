@@ -10,7 +10,7 @@ class Contents extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ListView(
-        padding: EdgeInsets.only(top: 15, bottom: 20),
+        padding: EdgeInsets.only(top: 15, bottom: 5),
         children: <Widget>[
           Text(
             'Syllabus',

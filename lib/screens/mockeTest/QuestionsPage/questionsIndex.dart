@@ -5,9 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:testination/database/testTakingPage/save&DeleteUserQuestion.dart';
 import 'package:testination/provider/account.dart';
 import 'package:testination/screens/mockeTest/QuestionsPage/submit/submitIndex.dart';
+import 'package:timer_count_down/timer_controller.dart';
 
-import 'qusetionAnswerProvider.dart';
 import 'questionWidget.dart';
+import 'qusetionAnswerProvider.dart';
 import 'supporters/modalBottomSheet.dart';
 import 'supporters/pauseButtonTimer.dart';
 import 'supporters/questionDrawer.dart';
@@ -82,6 +83,8 @@ class _QuestionsPageState extends State<QuestionsPage>
     _questionController.dispose();
     super.dispose();
   }
+
+  CountdownController _countController = CountdownController();
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +187,12 @@ class _QuestionsPageState extends State<QuestionsPage>
                                     question.totalTimeSpend,
                                     widget.category,
                                     widget.bundleName,
-                                    widget.testDetails['name'])
+                                    widget.testDetails['name'],
+                                    _isPause,
+                                    _countController,
+                                    resumeTimer,
+                                    pauseTimer,
+                                    onTimerFinished)
                                 : Container(),
                           ],
                         ),
@@ -202,14 +210,65 @@ class _QuestionsPageState extends State<QuestionsPage>
             color: theme.backgroundColor,
           ),
           Expanded(
-            child: TabBarView(
-              controller: _questionController,
-              children: <Widget>[
-                for (int i = 0; i < _questionAnswers.length; i++)
-                  QuestionAndOption(
-                    questionAnswer: _questionAnswers[i],
-                    qNo: i,
-                  ),
+            child: Stack(
+              children: [
+                TabBarView(
+                  controller: _questionController,
+                  children: <Widget>[
+                    for (int i = 0; i < _questionAnswers.length; i++)
+                      QuestionAndOption(
+                        questionAnswer: _questionAnswers[i],
+                        qNo: i,
+                      ),
+                  ],
+                ),
+                _isPause
+                    ? Container(
+                        alignment: Alignment.center,
+                        color: Colors.white,
+                        child: Material(
+                          child: InkWell(
+                            onTap: () {
+                              resumeTimer();
+                            },
+                            child: SizedBox(
+                              height: 50,
+                              width: 200,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.play_circle_fill, size: 50),
+                                      Text('  Resume'),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(),
+                isSubmitting
+                    ? Container(
+                        alignment: Alignment.center,
+                        color: Colors.white,
+                        child: SizedBox(
+                          height: 70,
+                          child: Column(
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(height: 15),
+                              Text(
+                                'Submitting ...',
+                                style: TextStyle(color: Colors.green),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container()
               ],
             ),
           ),
@@ -226,20 +285,7 @@ class _QuestionsPageState extends State<QuestionsPage>
             onTap: (i) async {
               //submit
               if (i == 2) {
-                String uid = Provider.of<MyAccount>(context, listen: false)
-                    .userDetails['uid'];
-
-                deleteSavedQuestions(widget.category, widget.bundleName,
-                    widget.testDetails['name'], uid);
-                runTimer = false;
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SubmitPage(
-                              questionsAndAnswers: _questionAnswers,
-                              documentId:
-                                  '${widget.category}${widget.bundleName}${widget.testDetails['name']}',
-                            )));
+                submitFunction(context, widget);
               }
               //review
               if (i == 0) {
@@ -300,5 +346,50 @@ class _QuestionsPageState extends State<QuestionsPage>
         },
       ),
     );
+  }
+
+  bool _isPause = false;
+  void resumeTimer() {
+    _countController.onResume();
+    _isPause = false;
+    setState(() {});
+  }
+
+  void pauseTimer() {
+    List saveQuestionSData =
+        Provider.of<QuestionAnswersProvider>(context, listen: false)
+            .saveQuestionData();
+    String uid =
+        Provider.of<MyAccount>(context, listen: false).userDetails['uid'];
+    saveQuestionsTimeData(widget.category, widget.bundleName,
+        widget.testDetails['name'], saveQuestionSData, uid);
+    _countController.pause();
+    _isPause = true;
+    setState(() {});
+  }
+
+  void onTimerFinished() {
+    submitFunction(context, widget);
+  }
+
+  bool isSubmitting = false;
+  void submitFunction(BuildContext context, widget) async {
+    isSubmitting = true;
+    setState(() {});
+    await Future.delayed(Duration(seconds: 2));
+    String uid =
+        Provider.of<MyAccount>(context, listen: false).userDetails['uid'];
+
+    deleteSavedQuestions(
+        widget.category, widget.bundleName, widget.testDetails['name'], uid);
+    runTimer = false;
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SubmitPage(
+                  questionsAndAnswers: _questionAnswers,
+                  documentId:
+                      '${widget.category}${widget.bundleName}${widget.testDetails['name']}',
+                )));
   }
 }

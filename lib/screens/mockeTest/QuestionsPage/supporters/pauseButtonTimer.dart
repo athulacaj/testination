@@ -2,8 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:testination/database/testTakingPage/save&DeleteUserQuestion.dart';
-import 'package:testination/provider/account.dart';
 import 'package:testination/screens/mockeTest/QuestionsPage/supporters/timeConvertor.dart';
 import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
@@ -18,13 +16,22 @@ class PauseTimer extends StatefulWidget {
   final String bundleName;
   final String test;
   final int totalTimedSpend;
+  final CountdownController _countController;
+  final bool _pause;
+  final Function pauseFunction;
+  final Function resumeFunction;
+  final Function onTimerComplete;
   PauseTimer(
-    this.time,
-    this.totalTimedSpend,
-    this.category,
-    this.bundleName,
-    this.test,
-  );
+      this.time,
+      this.totalTimedSpend,
+      this.category,
+      this.bundleName,
+      this.test,
+      this._pause,
+      this._countController,
+      this.pauseFunction,
+      this.resumeFunction,
+      this.onTimerComplete);
   @override
   _PauseTimerState createState() => _PauseTimerState();
 }
@@ -34,11 +41,13 @@ class _PauseTimerState extends State<PauseTimer> {
   int _totalTime;
 //  final int _secondsFactor = 1000000;
 
-  final CountdownController _countController = CountdownController();
+  CountdownController _countController;
 
   ThemeData theme;
   @override
   void initState() {
+    _countController = widget._countController;
+
     _totalTime = widget.time;
     timerFunction();
     super.initState();
@@ -56,34 +65,39 @@ class _PauseTimerState extends State<PauseTimer> {
 
   @override
   Widget build(BuildContext context) {
+    _countController = widget._countController;
+    _isPause = widget._pause;
     print('time spend   ${widget.totalTimedSpend}');
     _pageActive = true;
     theme = Theme.of(context);
+
     return Row(
       children: <Widget>[
         _isPause
             ? GestureDetector(
                 onTap: () {
-                  _countController.onResume();
-                  _isPause = false;
-                  setState(() {});
+                  // _countController.onResume();
+                  // _isPause = false;
+                  // setState(() {});
+                  widget.pauseFunction();
                 },
                 child: Icon(Icons.play_circle_outline,
                     color: Colors.green, size: 35),
               )
             : GestureDetector(
                 onTap: () {
-                  List saveQuestionSData = Provider.of<QuestionAnswersProvider>(
-                          context,
-                          listen: false)
-                      .saveQuestionData();
-                  String uid = Provider.of<MyAccount>(context, listen: false)
-                      .userDetails['uid'];
-                  saveQuestionsTimeData(widget.category, widget.bundleName,
-                      widget.test, saveQuestionSData, uid);
-                  _countController.pause();
-                  _isPause = true;
-                  setState(() {});
+                  widget.resumeFunction();
+                  // List saveQuestionSData = Provider.of<QuestionAnswersProvider>(
+                  //         context,
+                  //         listen: false)
+                  //     .saveQuestionData();
+                  // String uid = Provider.of<MyAccount>(context, listen: false)
+                  //     .userDetails['uid'];
+                  // saveQuestionsTimeData(widget.category, widget.bundleName,
+                  //     widget.test, saveQuestionSData, uid);
+                  // _countController.pause();
+                  // _isPause = true;
+                  // setState(() {});
                 },
                 child: Icon(Icons.pause, color: Colors.green, size: 35),
               ),
@@ -99,6 +113,7 @@ class _PauseTimerState extends State<PauseTimer> {
           ),
           interval: Duration(seconds: 1),
           onFinished: () {
+            widget.onTimerComplete();
             print('Timer is done!');
           },
         ),
