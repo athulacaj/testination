@@ -121,12 +121,13 @@ class _TestPageState extends State<TestPage> {
                       .retrieveSavedQuestionData(savedQuestionDetails, false);
                 }
                 _showSpinner = false;
+                // print(widget.testInfo['section']);
+
                 setState(() {});
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => QuestionsPage(
-//                      questionTitle: 'Mock Test $name',
                         testDetails: widget.testInfo,
                         bundleName: widget.bundleName,
                         category: widget.category,

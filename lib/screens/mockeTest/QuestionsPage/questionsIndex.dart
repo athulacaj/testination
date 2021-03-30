@@ -144,7 +144,7 @@ class _QuestionsPageState extends State<QuestionsPage>
                                 elevation: 0,
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 4),
-                                  height: 34,
+                                  height: 45,
                                   child: Row(
                                     children: <Widget>[
                                       Text(
@@ -160,7 +160,7 @@ class _QuestionsPageState extends State<QuestionsPage>
                                             children: <Widget>[
                                               Text(
                                                 '${question.questionIndex + 1}/${_questionAnswers.length}',
-                                                style: TextStyle(fontSize: 18),
+                                                style: TextStyle(fontSize: 17),
                                               ),
                                               SizedBox(width: 25),
                                             ],
@@ -219,6 +219,7 @@ class _QuestionsPageState extends State<QuestionsPage>
                       QuestionAndOption(
                         questionAnswer: _questionAnswers[i],
                         qNo: i,
+                        sectionList:widget.testDetails['section'],
                       ),
                   ],
                 ),

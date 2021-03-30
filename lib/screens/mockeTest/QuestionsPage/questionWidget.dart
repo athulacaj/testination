@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 import 'package:provider/provider.dart';
+import 'package:testination/screens/mockeTest/QuestionsPage/SectionView.dart';
 import 'package:testination/screens/mockeTest/QuestionsPage/qusetionAnswerProvider.dart';
 
 import 'optionsWidget.dart';
@@ -9,19 +10,24 @@ int _selectedIndex = -1;
 
 class QuestionAndOption extends StatelessWidget {
   final Map questionAnswer;
+  final List sectionList;
   final int qNo;
-  QuestionAndOption({this.questionAnswer, @required this.qNo});
+  QuestionAndOption(
+      {this.questionAnswer, @required this.qNo, @required this.sectionList});
   final TeXViewRenderingEngine renderingEngine =
       const TeXViewRenderingEngine.katex();
-  String tx =
-      r"<div style=' height:500px'><img src=https://firebasestorage.googleapis.com/v0/b/testination-e6442.appspot.com/o/addNotes%2F2021%2F0%2F1611469938157-WhatsApp%20Image%202020-12-14%20at%204.11.17%20PM.jpg?alt=media&token=b7bb4403-6a8f-4617-9cd5-ec7e5180aaab' class='imgSmL' height='500px' style='float:left' ></div>"
-      r"hjhjghjgjh dfgjdflh hgdfnhsg hgdlhg hglnhglhghslkghlkg hglnshlnhg lsghl'gf sh";
+  String tx = r"<!--<div style=' height:500px'>"
+      r"<img src=https://firebasestorage.googleapis.com/v0/b/testination-e6442.appspot.com/o/addNotes%2F2021%2F0%2F1611469938157-WhatsApp%20Image%202020-12-14%20at%204.11.17%20PM.jpg?alt=media&token=b7bb4403-6a8f-4617-9cd5-ec7e5180aaab' class='imgSmL' height='500px' style='float:left' >"
+      r"</div>"
+      r"hjhjghjgjh dfgjdflh hgdfnhsg hgdlhg hglnhglhghslkghlkg hglnshlnhg lsghl'gf sh-->";
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     String question = questionAnswer['question'];
     List options = questionAnswer['options'];
     int answerIndex = questionAnswer['answerIndex'];
+    SectionMaker sectionMaker = SectionMaker(sectionList);
+    Map sectionMap = sectionMaker.getSectionForEachQues(qNo + 1);
     return TweenAnimationBuilder(
         tween: Tween<double>(begin: 0, end: 1),
         duration: Duration(milliseconds: 900),
@@ -63,12 +69,54 @@ class QuestionAndOption extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             SizedBox(height: 10),
-                                            // Text(
-                                            //   'Title',
-                                            //   style: TextStyle(
-                                            //       fontSize: 18,
-                                            //       fontWeight: FontWeight.w600),
-                                            // ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                // future.then((void value) => closeModal(value));
+                                              },
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  Future<void> future =
+                                                      showModalBottomSheet<
+                                                          void>(
+                                                    isScrollControlled: true,
+                                                    barrierColor: Colors.black
+                                                        .withOpacity(0.16),
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return SizedBox(
+                                                        height:
+                                                            size.height - 130,
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: SectionView(
+                                                              sectionMap),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.info_outline,
+                                                      size: 20,
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Expanded(
+                                                      child: Text(
+                                                        'Section ${sectionMap['i']} (Qno: ${sectionMap['f']} - ${sectionMap['l']})',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
                                             SizedBox(height: 10),
                                             isHtml(question)
                                                 ? TeXView(
@@ -91,7 +139,8 @@ class QuestionAndOption extends StatelessWidget {
                                                         child: TeXViewColumn(
                                                             children: [
                                                               TeXViewDocument(
-                                                                  tx,
+                                                                  sectionMap[
+                                                                      'paragraph'],
                                                                   style:
                                                                       TeXViewStyle(
                                                                           fontStyle:

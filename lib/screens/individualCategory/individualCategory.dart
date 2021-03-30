@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_boom_menu/flutter_boom_menu.dart';
+// import 'package:flutter_boom_menu/flutter_boom_menu.dart';
 import 'package:provider/provider.dart';
-import 'package:testination/database/openRommDatabase.dart';
 import 'package:testination/provider/account.dart';
 import 'package:testination/screens/mockeTest/mocktestIndex.dart';
 
@@ -203,7 +201,7 @@ class _IndividualCategoryState extends State<IndividualCategory> {
             ),
           ),
           SizedBox(
-            height: size.height - 130,
+            height: size.height * .78,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: GridView.builder(
