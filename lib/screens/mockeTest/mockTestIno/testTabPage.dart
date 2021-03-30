@@ -121,8 +121,9 @@ class _TestPageState extends State<TestPage> {
                       .retrieveSavedQuestionData(savedQuestionDetails, false);
                 }
                 _showSpinner = false;
-                // print(widget.testInfo['section']);
-
+                // clearing section viewed history
+                Provider.of<QuestionAnswersProvider>(context, listen: false)
+                    .sectionMap = {};
                 setState(() {});
                 Navigator.push(
                     context,

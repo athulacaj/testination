@@ -7,6 +7,7 @@ class QuestionAnswersProvider extends ChangeNotifier {
   int questionIndex = 0;
   int previousIndex = -1;
   List<Map> answeredList = [];
+  Map sectionMap = {};
   List<Map> markedList = []; //marked for review,
   int totalTimeSpend = 0;
   List saveQuestionData() {
@@ -94,6 +95,11 @@ class QuestionAnswersProvider extends ChangeNotifier {
 
   void addToGuess(bool isGuessed) {
     answeredList[questionIndex]['isGuessed'] = isGuessed;
+    notifyListeners();
+  }
+
+  void addSectionViewed(int section) {
+    sectionMap[section] = true;
     notifyListeners();
   }
 

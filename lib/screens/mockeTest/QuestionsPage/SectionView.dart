@@ -51,31 +51,13 @@ class _SectionViewState extends State<SectionView> {
             },
             onWebViewCreated: (WebViewController webViewController) async {
               _controller = webViewController;
-              _loadHtmlFromAssets(
-                  _controller,
-                  head +
-                      "<h3>" +
-                      'Section ${widget.sectionData['i']} (Qno: ${widget.sectionData['f']} - ${widget.sectionData['l']})' +
-                      "</h3>"
-                          "<h4>" +
-                      widget.sectionData['instruction'] +
-                      "</h4>" +
-                      widget.sectionData['paragraph'] +
-                      r"$${a/b}$$" +
-                      widget.sectionData['paragraph'] +
-                      foot);
+              _loadHtmlFromAssets(_controller, result(widget.sectionData));
             },
           ),
         ),
       ],
     );
   }
-}
-
-_loadHtmlFromAssets(WebViewController controller, String txt) async {
-  controller.loadUrl(Uri.dataFromString(txt,
-          mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
-      .toString());
 }
 
 class SectionMaker {
@@ -97,6 +79,44 @@ class SectionMaker {
       }
     }
   }
+}
+
+String result(Map sectionData) {
+  String t = '';
+  if (sectionData['instruction'] != null && sectionData['paragraph'] != null) {
+    t = head +
+        "<h3>" +
+        'Section ${sectionData['i']} (Qno: ${sectionData['f']} - ${sectionData['l']})' +
+        "</h3>"
+            "<h4>" +
+        sectionData['instruction'] +
+        "</h4>" +
+        sectionData['paragraph'] +
+        foot;
+  } else if (sectionData['instruction'] != null) {
+    t = head +
+        "<h3>" +
+        'Section ${sectionData['i']} (Qno: ${sectionData['f']} - ${sectionData['l']})' +
+        "</h3>"
+            "<h4>" +
+        sectionData['instruction'] +
+        "</h4>" +
+        foot;
+  } else if (sectionData['paragraph'] != null) {
+    t = head +
+        "<h3>" +
+        'Section ${sectionData['i']} (Qno: ${sectionData['f']} - ${sectionData['l']})' +
+        "</h3>" +
+        sectionData['paragraph'] +
+        foot;
+  }
+  return t;
+}
+
+_loadHtmlFromAssets(WebViewController controller, String txt) async {
+  controller.loadUrl(Uri.dataFromString(txt,
+          mimeType: 'text/html', encoding: Encoding.getByName('utf-8'))
+      .toString());
 }
 
 String head = r'''

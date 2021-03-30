@@ -27,7 +27,10 @@ class QuestionAndOption extends StatelessWidget {
     List options = questionAnswer['options'];
     int answerIndex = questionAnswer['answerIndex'];
     SectionMaker sectionMaker = SectionMaker(sectionList);
-    Map sectionMap = sectionMaker.getSectionForEachQues(qNo + 1);
+    Map sectionMap = {};
+    if (sectionList != null) {
+      sectionMap = sectionMaker.getSectionForEachQues(qNo + 1);
+    }
     return TweenAnimationBuilder(
         tween: Tween<double>(begin: 0, end: 1),
         duration: Duration(milliseconds: 900),
@@ -37,183 +40,192 @@ class QuestionAndOption extends StatelessWidget {
           return Opacity(
             opacity: opacity,
             child: Container(
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.all(0),
-                      children: <Widget>[
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                              minHeight: 100, maxHeight: size.height / 1.75),
-                          child: ListView(
-                            padding: EdgeInsets.all(0),
-                            shrinkWrap: true,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 1),
-                                child: Material(
-                                  elevation: 1,
-                                  child: Stack(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 21,
-                                            right: 21,
-                                            top: 5,
-                                            bottom: 10),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            SizedBox(height: 10),
-                                            GestureDetector(
-                                              onTap: () {
-                                                // future.then((void value) => closeModal(value));
-                                              },
-                                              child: TextButton(
-                                                onPressed: () {
-                                                  Future<void> future =
-                                                      showModalBottomSheet<
-                                                          void>(
-                                                    isScrollControlled: true,
-                                                    barrierColor: Colors.black
-                                                        .withOpacity(0.16),
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return SizedBox(
-                                                        height:
-                                                            size.height - 130,
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          child: SectionView(
-                                                              sectionMap),
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.info_outline,
-                                                      size: 20,
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Expanded(
-                                                      child: Text(
-                                                        'Section ${sectionMap['i']} (Qno: ${sectionMap['f']} - ${sectionMap['l']})',
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(height: 10),
-                                            isHtml(question)
-                                                ? TeXView(
-                                                    renderingEngine:
-                                                        renderingEngine,
-                                                    loadingWidgetBuilder:
-                                                        (context) {
-                                                      return Center(
-                                                          child:
-                                                              CircularProgressIndicator());
-                                                    },
-                                                    child: TeXViewContainer(
-                                                        style: TeXViewStyle(
-                                                            contentColor: theme
-                                                                .accentColor,
-                                                            backgroundColor: theme
-                                                                .backgroundColor
-                                                                .withOpacity(
-                                                                    0.01)),
-                                                        child: TeXViewColumn(
-                                                            children: [
-                                                              TeXViewDocument(
-                                                                  sectionMap[
-                                                                      'paragraph'],
-                                                                  style:
-                                                                      TeXViewStyle(
-                                                                          fontStyle:
-                                                                              TeXViewFontStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    sizeUnit:
-                                                                        TeXViewSizeUnit
-                                                                            .Pixels,
-                                                                    // fontFamily: GoogleFonts.akronim().fontFamily,
-                                                                  ))),
-                                                            ])),
-                                                  )
-                                                : Text(
-                                                    '$question',
-                                                    style:
-                                                        TextStyle(fontSize: 17),
-                                                  ),
-                                          ],
-                                        ),
-                                      ),
-                                      Consumer<QuestionAnswersProvider>(
-                                        builder: (BuildContext context,
-                                            provider, Widget child) {
-                                          bool isGuessed = provider
-                                              .answeredList[qNo]['isGuessed'];
-                                          int optionIndex = provider
-                                              .answeredList[qNo]['selected'];
-                                          return isGuessed
-                                              ? Positioned(
-                                                  right: 5,
-                                                  child: Container(
-                                                      width: 65,
-                                                      height: 18,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Colors.black87),
-                                                      child: Text(
-                                                          optionIndex == -1
-                                                              ? 'Guess'
-                                                              : 'Guessed',
-                                                          style: TextStyle(
+              child: Consumer<QuestionAnswersProvider>(
+                  builder: (BuildContext context, provider, Widget child) {
+                bool isGuessed = provider.answeredList[qNo]['isGuessed'];
+                int optionIndex = provider.answeredList[qNo]['selected'];
+                Map sectionViewedMap = provider.sectionMap;
+
+                return Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.all(0),
+                        children: <Widget>[
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                                minHeight: 100, maxHeight: size.height / 1.75),
+                            child: ListView(
+                              padding: EdgeInsets.all(0),
+                              shrinkWrap: true,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(top: 1),
+                                  child: Material(
+                                    elevation: 1,
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 21,
+                                              right: 21,
+                                              top: 5,
+                                              bottom: 10),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              SizedBox(height: 10),
+                                              sectionMap.isNotEmpty
+                                                  ? TextButton(
+                                                      style: TextButton.styleFrom(
+                                                          primary: sectionViewedMap[
+                                                                      sectionMap[
+                                                                          'i']] ==
+                                                                  null
+                                                              ? Colors
+                                                                  .deepOrangeAccent
+                                                              : Colors.green,
+                                                          textStyle: TextStyle(
                                                               color: Colors
-                                                                  .white))),
-                                                )
-                                              : Container();
-                                        },
-                                      )
-                                    ],
+                                                                  .orange)),
+                                                      onPressed: () {
+                                                        Future<void> future =
+                                                            showModalBottomSheet<
+                                                                void>(
+                                                          isScrollControlled:
+                                                              true,
+                                                          barrierColor: Colors
+                                                              .black
+                                                              .withOpacity(
+                                                                  0.16),
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return SizedBox(
+                                                              height:
+                                                                  size.height -
+                                                                      130,
+                                                              child:
+                                                                  SingleChildScrollView(
+                                                                child: SectionView(
+                                                                    sectionMap),
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                        provider
+                                                            .addSectionViewed(
+                                                                sectionMap[
+                                                                    'i']);
+                                                      },
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.info_outline,
+                                                            size: 20,
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          Expanded(
+                                                            child: Text(
+                                                              'Section ${sectionMap['i']} (Qno: ${sectionMap['f']} - ${sectionMap['l']})',
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : Container(),
+                                              SizedBox(height: 10),
+                                              isHtml(question)
+                                                  ? TeXView(
+                                                      renderingEngine:
+                                                          renderingEngine,
+                                                      loadingWidgetBuilder:
+                                                          (context) {
+                                                        return Center(
+                                                            child:
+                                                                CircularProgressIndicator());
+                                                      },
+                                                      child: TeXViewContainer(
+                                                          style: TeXViewStyle(
+                                                              contentColor: theme
+                                                                  .accentColor,
+                                                              backgroundColor: theme
+                                                                  .backgroundColor
+                                                                  .withOpacity(
+                                                                      0.01)),
+                                                          child: TeXViewColumn(
+                                                              children: [
+                                                                TeXViewDocument(
+                                                                    question,
+                                                                    style: TeXViewStyle(
+                                                                        fontStyle: TeXViewFontStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      sizeUnit:
+                                                                          TeXViewSizeUnit
+                                                                              .Pixels,
+                                                                      // fontFamily: GoogleFonts.akronim().fontFamily,
+                                                                    ))),
+                                                              ])),
+                                                    )
+                                                  : Text(
+                                                      '$question',
+                                                      style: TextStyle(
+                                                          fontSize: 17),
+                                                    ),
+                                            ],
+                                          ),
+                                        ),
+                                        isGuessed
+                                            ? Positioned(
+                                                right: 5,
+                                                child: Container(
+                                                    width: 65,
+                                                    height: 18,
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.black87),
+                                                    child: Text(
+                                                        optionIndex == -1
+                                                            ? 'Guess'
+                                                            : 'Guessed',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white))),
+                                              )
+                                            : Container()
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 0),
-                        Padding(
+                          SizedBox(height: 0),
+                          Padding(
 //                  padding: const EdgeInsets.symmetric(horizontal: 19),
-                          padding:
-                              EdgeInsets.only(left: 23, right: 19, bottom: 20),
-                          child: Options(
-                            selectedIndex: _selectedIndex,
-                            options: options,
-                            qNo: qNo,
+                            padding: EdgeInsets.only(
+                                left: 23, right: 19, bottom: 20),
+                            child: Options(
+                              selectedIndex: _selectedIndex,
+                              options: options,
+                              qNo: qNo,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                );
+              }),
             ),
           );
         });
