@@ -130,7 +130,7 @@ class QuestionAndOption extends StatelessWidget {
                                                           SizedBox(width: 10),
                                                           Expanded(
                                                             child: Text(
-                                                              'Section ${sectionMap['i']} (Qno: ${sectionMap['f']} - ${sectionMap['l']})',
+                                                              'Section $sectionMap)',
                                                               style: TextStyle(
                                                                   fontSize: 16,
                                                                   fontWeight:
