@@ -17,46 +17,39 @@ class Category extends StatelessWidget {
       this.onclick});
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onclick,
-      child: Material(
+    return Material(
 //        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-        elevation: 3,
-        child: Container(
-          width: (MediaQuery.of(context).size.width - 90) / 3,
-          height: (MediaQuery.of(context).size.height) / 7,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                height: 40,
-                width: 40,
-                alignment: Alignment.center,
-                child: Text(
-                  '$symbol',
-                  style: GoogleFonts.sairaCondensed(
-                    textStyle: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600),
-                  ),
-                ),
-                decoration: BoxDecoration(
-                  color: theme.primaryColorLight,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                '$title',
-                style: TextStyle(fontSize: 16),
-              )
-            ],
-          ),
-//      decoration: BoxDecoration(
-//          border: Border.all(color: Colors.black38, width: 1),
-//          borderRadius: BorderRadius.all(Radius.circular(8))),
+      borderRadius: BorderRadius.all(Radius.circular(8)),
+      elevation: 4,
+      child: InkWell(
+        onTap: onclick,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            // Container(
+            //   height: 40,
+            //   width: 40,
+            //   alignment: Alignment.center,
+            //   child: Text(
+            //     '$symbol',
+            //     style: GoogleFonts.sairaCondensed(
+            //       textStyle: TextStyle(
+            //           fontSize: 24,
+            //           color: Colors.white,
+            //           fontWeight: FontWeight.w600),
+            //     ),
+            //   ),
+            //   decoration: BoxDecoration(
+            //     color: theme.primaryColorLight,
+            //     borderRadius: BorderRadius.all(Radius.circular(10)),
+            //   ),
+            // ),
+            // SizedBox(height: 10),
+            Text(
+              '$title',
+              style: TextStyle(fontSize: 16),
+            )
+          ],
         ),
       ),
     );

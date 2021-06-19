@@ -6,7 +6,9 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:testination/database/openRommDatabase.dart';
 import 'package:testination/screens/individualCategory/individualCategory.dart';
 import 'package:testination/screens/mockeTest/mocktestIndex.dart';
+import 'package:testination/utility/constants.dart';
 import 'package:testination/utility/textFiledDecoration.dart';
+import 'package:testination/utility/widgets/commonAppBar.dart';
 
 import 'utilities/category.dart';
 import 'utilities/trendingItem.dart';
@@ -71,46 +73,160 @@ class _OpenRoomState extends State<OpenRoom> {
         valueColor: new AlwaysStoppedAnimation<Color>(theme.primaryColorDark),
       ),
       child: Scaffold(
-//      backgroundColor: Colors.white,
+        backgroundColor: theme.backgroundColor,
+        // backgroundColor: Colors.green,
         body: Column(
           children: <Widget>[
-            _shopAppBar
-                ? Container(
-                    child: SafeArea(
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 50,
+            // _shopAppBar
+            //     ? commonAppBar(
+            //         context: context, title: 'Open Room', theme: theme)
+            //     : SafeArea(child: Container()),
+            // SizedBox(height: 30),
+            SafeArea(
+              child: Material(
+                elevation: 3,
+                child: Container(
+                  height: 140,
+                  color: theme.appBarTheme.color,
+                  child: Column(
+                    children: [
+                      AnimatedContainer(
+                        height: _shopAppBar ? 50 : 0,
+                        // width: _shopAppBar ? size.width : 0,
+                        duration: Duration(milliseconds: 400),
+                        child: _shopAppBar
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: Icon(Icons.arrow_back),
+                                      padding: EdgeInsets.all(0),
+                                    ),
+                                    SizedBox(width: 18),
+                                    Text(
+                                      'Open Room',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: theme.primaryColorDark,
+                                          fontSize: 20),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(),
+                      ),
+                      Container(
+                        // padding: EdgeInsets.symmetric(
+                        //     horizontal: 28, vertical: 10),
+                        padding: EdgeInsets.all(8),
+                        height: 70,
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            SizedBox(width: 10),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Icon(
-                                Icons.arrow_back_ios,
-                                size: 30,
-                                color: theme.primaryColorDark,
-                              ),
+                          children: [
+                            !_shopAppBar
+                                ? IconButton(
+                                    onPressed: () {
+                                      _shopAppBar = true;
+                                      _focus.unfocus();
+                                      setState(() {});
+                                    },
+                                    icon: Icon(Icons.arrow_back),
+                                    padding: EdgeInsets.all(0),
+                                  )
+                                : SizedBox(width: 32),
+                            Container(
+                              width: size.width - 64,
+                              color: Colors.white,
+                              child: TypeAheadField(
+//                      hideOnEmpty: true,
+                                  suggestionsBoxController:
+                                      _suggestionsBoxController,
+                                  textFieldConfiguration:
+                                      TextFieldConfiguration(
+                                    controller: _typeAheadController,
+                                    focusNode: _focus,
+                                    autofocus: false,
+                                    textAlign: TextAlign.center,
+                                    decoration: textFieldDecoration.copyWith(
+                                      suffixIcon: IconButton(
+                                        icon: Icon(Icons.close),
+                                        onPressed: () {
+                                          _typeAheadController.clear();
+                                          _suggestionsBoxController.close();
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  suggestionsCallback: (pattern) async {
+                                    List<Map> suggestionList = getSuggestions(
+                                        widget.searchList, pattern);
+                                    return suggestionList;
+                                  },
+                                  itemBuilder: (context, suggestion) {
+                                    return ListTile(
+//                          leading: Icon(Icons.collections_bookmark),
+                                      title: Material(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(6)),
+                                        elevation: 2,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Spacer(),
+                                                  Container(
+                                                    width: 55,
+                                                    color:
+                                                        theme.primaryColorDark,
+                                                    child: Text(
+                                                      suggestion['category']
+                                                          .toUpperCase(),
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Text(suggestion['name'] +
+                                                  ' by ' +
+                                                  suggestion['author']),
+                                              SizedBox(height: 4),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+//                    subtitle: Text('\$${suggestion['price']}'),
+                                    );
+                                  },
+                                  onSuggestionSelected: (suggestion) async {
+                                    _showSpinner = true;
+                                    setState(() {});
+                                    await getDataOFSearchedSelected(
+                                        suggestion['category'],
+                                        suggestion['id'],
+                                        context);
+                                    _showSpinner = false;
+                                    setState(() {});
+                                  }),
                             ),
-                            Spacer(),
-                            Text(
-                              'Open Room',
-                              style: TextStyle(
-                                  color: theme.primaryColorDark,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 20),
-                            ),
-                            Spacer(),
-                            SizedBox(width: 45),
                           ],
                         ),
                       ),
-                    ),
-                    color: theme.backgroundColor,
-                  )
-                : SafeArea(child: Container()),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             SizedBox(height: 10),
             Expanded(
               child: ListView(
@@ -118,94 +234,15 @@ class _OpenRoomState extends State<OpenRoom> {
                 children: <Widget>[
                   SizedBox(height: 0),
                   // search
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 28, vertical: 10),
-                    height: 70,
-                    child: Container(
-                      child: TypeAheadField(
-//                      hideOnEmpty: true,
-                          suggestionsBoxController: _suggestionsBoxController,
-                          textFieldConfiguration: TextFieldConfiguration(
-                            controller: _typeAheadController,
-                            focusNode: _focus,
 
-                            autofocus: false,
-                            textAlign: TextAlign.center,
-//                          style: TextStyle(color: Colors.black),
-                            decoration: textFieldDecoration.copyWith(
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.close),
-                                onPressed: () {
-                                  _typeAheadController.clear();
-                                  _suggestionsBoxController.close();
-                                },
-                              ),
-                            ),
-                          ),
-                          suggestionsCallback: (pattern) async {
-                            List<Map> suggestionList =
-                                getSuggestions(widget.searchList, pattern);
-                            return suggestionList;
-                          },
-                          itemBuilder: (context, suggestion) {
-                            return ListTile(
-//                          leading: Icon(Icons.collections_bookmark),
-                              title: Material(
-                                color: Theme.of(context).colorScheme.surface,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(6)),
-                                elevation: 2,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Spacer(),
-                                          Container(
-                                            width: 55,
-                                            color: Colors.orange.shade800,
-                                            child: Text(
-                                              suggestion['category']
-                                                  .toUpperCase(),
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(suggestion['name'] +
-                                          ' by ' +
-                                          suggestion['author']),
-                                      SizedBox(height: 4),
-                                    ],
-                                  ),
-                                ),
-                              ),
-//                    subtitle: Text('\$${suggestion['price']}'),
-                            );
-                          },
-                          onSuggestionSelected: (suggestion) async {
-                            _showSpinner = true;
-                            setState(() {});
-                            await getDataOFSearchedSelected(
-                                suggestion['category'],
-                                suggestion['id'],
-                                context);
-                            _showSpinner = false;
-                            setState(() {});
-                          }),
-                    ),
-                  ),
-                  SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(KDefaultPadding),
                     child: Material(
                       elevation: 3,
                       child: Container(
-                        padding: const EdgeInsets.only(
-                            left: 20, right: 20, top: 15, bottom: 15),
+                        // padding: const EdgeInsets.only(
+                        //     left: 20, right: 20, top: 15, bottom: 15),
+                        padding: EdgeInsets.all(14),
                         color: theme.backgroundColor,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,9 +263,9 @@ class _OpenRoomState extends State<OpenRoom> {
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                       childAspectRatio:
-                                          size.width / (size.height / 1.7),
+                                          size.width / (size.height / 2.2),
                                       crossAxisSpacing: size.width / 20,
-                                      mainAxisSpacing: size.height / 40,
+                                      mainAxisSpacing: size.width / 20,
                                       crossAxisCount: 3),
                               itemBuilder: (BuildContext context, int index) {
                                 String category =
@@ -267,25 +304,25 @@ class _OpenRoomState extends State<OpenRoom> {
                       ),
                     ),
                   ),
-                  // categories
-                  SizedBox(height: 25),
+                  //
+                  Divider(),
+
+                  SizedBox(height: 10),
                   //trending
                   Container(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: KDefaultPadding),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0),
-                          child: Text(
-                            'Trending',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
+                        Text(
+                          'Trending',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                         SizedBox(height: 15),
-                        SizedBox(
-                          height: 160,
+                        Container(
+                          height: 200,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: 5,
@@ -293,7 +330,7 @@ class _OpenRoomState extends State<OpenRoom> {
                               int i = index <= 4 ? index : index - 5;
                               return Padding(
                                 padding:
-                                    const EdgeInsets.only(right: 0, left: 18),
+                                    const EdgeInsets.only(right: 0, left: 14),
                                 child: TrendingItem(
                                   theme: theme,
                                   buttonColor: buttonColors[i],

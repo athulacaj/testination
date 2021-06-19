@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:testination/provider/account.dart';
 import 'package:testination/screens/mockeTest/mocktestIndex.dart';
+import 'package:testination/utility/constants.dart';
+import 'package:testination/utility/widgets/commonAppBar.dart';
 
 import 'fliterMenuButton.dart';
 
@@ -25,11 +27,12 @@ class IndividualCategory extends StatefulWidget {
 }
 
 class _IndividualCategoryState extends State<IndividualCategory> {
-  String selectedFilter = 'all';
+  String selectedFilter = 'All';
   List allIndividualList = [];
   @override
   void initState() {
     resetData();
+    selectedFilter = 'All';
     super.initState();
   }
 
@@ -49,44 +52,11 @@ class _IndividualCategoryState extends State<IndividualCategory> {
         Provider.of<MyAccount>(context, listen: false).userDetails['uid'];
 
     return Scaffold(
+      appBar: commonAppBar(
+          title: widget.title.toString(), context: context, theme: theme),
+      backgroundColor: theme.backgroundColor,
       body: Column(
         children: <Widget>[
-          Container(
-            child: SafeArea(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                height: 50,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            size: 30,
-                          ),
-                        ),
-                        SizedBox(width: 20),
-                        Text(
-                          widget.title.toString(),
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        Spacer(),
-                        SizedBox(width: 30),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            color: theme.backgroundColor,
-          ),
           Container(
             height: 50,
             color: theme.backgroundColor,
@@ -95,32 +65,29 @@ class _IndividualCategoryState extends State<IndividualCategory> {
               children: <Widget>[
                 GestureDetector(
                   onTap: () async {
-                    return await showDialog<void>(
+                    return await showModalBottomSheet<void>(
                         context: context,
-                        useSafeArea: false,
-                        barrierDismissible: true, // user must tap button!
                         builder: (BuildContext context) {
                           return Container(
-                            height: size.height - 70,
                             width: size.width,
+                            height: 250,
                             color: Colors.redAccent,
                             child: Material(
                               child: Column(
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Container(
                                         color: theme.backgroundColor,
                                         width: size.width - 50,
-                                        height: size.height,
-                                        child: ListView(
-                                          padding: EdgeInsets.all(0),
+                                        height: 250,
+                                        child: Column(
                                           children: [
                                             SizedBox(height: 40),
                                             Padding(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 10),
+                                                  horizontal: 8),
                                               child: Column(
                                                 children: [
                                                   Text(
@@ -130,7 +97,7 @@ class _IndividualCategoryState extends State<IndividualCategory> {
                                                         fontWeight:
                                                             FontWeight.w600),
                                                   ),
-                                                  SizedBox(height: 20),
+                                                  SizedBox(height: 15),
                                                   FilterButton(
                                                     title: 'All',
                                                     selectedFilter:
@@ -139,7 +106,8 @@ class _IndividualCategoryState extends State<IndividualCategory> {
                                                       allIndividualList = widget
                                                           .individualDatalist[0];
                                                       Navigator.pop(context);
-                                                      selectedFilter = 'All';
+                                                      print(selectedFilter);
+                                                      // selectedFilter = 'All';
                                                     },
                                                   ),
                                                   FilterButton(
@@ -188,10 +156,17 @@ class _IndividualCategoryState extends State<IndividualCategory> {
                     child: Container(
                       alignment: Alignment.center,
                       height: 30,
-                      width: 100,
-                      child: Text(
-                        'Filter',
-                        style: TextStyle(color: Colors.white),
+                      width: 160,
+                      padding: EdgeInsets.all(4),
+                      // width: 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Filter: $selectedFilter',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -200,15 +175,18 @@ class _IndividualCategoryState extends State<IndividualCategory> {
               ],
             ),
           ),
-          SizedBox(
-            height: size.height * .78,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+          Padding(
+            padding: const EdgeInsets.all(KDefaultPadding - 3),
+            child: SizedBox(
+              height: size.height - 165,
               child: GridView.builder(
                 shrinkWrap: true,
                 itemCount: allIndividualList.length,
                 padding: EdgeInsets.only(left: 0),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: (size.width - KDefaultPadding * 3) / 330,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
                     crossAxisCount:
                         (orientation == Orientation.portrait) ? 2 : 3),
                 itemBuilder: (BuildContext context, int index) {
@@ -239,7 +217,7 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+      padding: const EdgeInsets.all(3),
       child: GestureDetector(
         onTap: () {
           Navigator.push(

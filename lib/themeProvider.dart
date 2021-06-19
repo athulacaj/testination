@@ -14,16 +14,31 @@ final darkTheme = ThemeData(
   buttonColor: Color(0xff49c6e6),
 );
 
+// final lightTheme = ThemeData(
+//   brightness: WidgetsBinding.instance.window.platformBrightness,
+//
+//   primarySwatch: Colors.green,
+//   primaryColorDark: Colors.green.shade800,
+//   primaryColor: Colors.green.shade500,
+//   primaryColorLight: Color(0xff49CC7F),
+//   buttonColor: Color(0xff49c6e6),
+//   backgroundColor: Colors.white,
+//   textTheme: GoogleFonts.manropeTextTheme(),
+//   appBarTheme: AppBarTheme(color: Colors.white),
+//   accentColor: Colors.black,
+//   dividerColor: Colors.white10,
+//   visualDensity: VisualDensity.adaptivePlatformDensity,
+//   tabBarTheme:
+//       TabBarTheme(unselectedLabelColor: Colors.grey, labelColor: Colors.black),
+// );
 final lightTheme = ThemeData(
   brightness: WidgetsBinding.instance.window.platformBrightness,
-
   primarySwatch: Colors.green,
-//        primaryColorDark: Color(0xff472DC2),
-  primaryColorDark: Colors.green.shade800,
-  primaryColor: Colors.green.shade500,
-  primaryColorLight: Color(0xff49CC7F),
-  buttonColor: Color(0xff49c6e6),
-  backgroundColor: Colors.white,
+  primaryColorDark: Color(0xff09CC81),
+  primaryColor: Color(0xff00E9A4),
+  primaryColorLight: Color(0xff00E9A4),
+  buttonColor: Color(0xff09CC81),
+  backgroundColor: Color(0xfff8f8f8),
   textTheme: GoogleFonts.manropeTextTheme(),
   appBarTheme: AppBarTheme(color: Colors.white),
   accentColor: Colors.black,

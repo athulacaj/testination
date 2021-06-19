@@ -55,9 +55,9 @@ class ExtractedContainer extends StatelessWidget {
                 Spacer(),
               ],
             ),
-//              decoration: BoxDecoration(
-//                color: theme.primaryColor,
-//              ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
           ),
         ),
       ),

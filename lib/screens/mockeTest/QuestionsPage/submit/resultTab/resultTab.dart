@@ -31,16 +31,19 @@ class ResultTabPage extends StatefulWidget {
   _ResultTabPageState createState() => _ResultTabPageState();
 }
 
+Map checkedAnswersData;
+
 class _ResultTabPageState extends State<ResultTabPage> {
   @override
   void initState() {
+    checkedAnswersData =
+        checkAnswerIsCorrect(context, widget.questionsAndAnswers);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    total = checkAnswerIsCorrect(widget.questionsAndAnswers, context,
-        widget.questionsAndAnswers)['total'];
+    total = checkedAnswersData['total'];
     final ThemeData theme = Theme.of(context);
     _docId = widget.docId;
     return ListView(
@@ -62,8 +65,7 @@ class _ResultTabPageState extends State<ResultTabPage> {
                     style: TextStyle(color: Colors.green),
                   ),
                   SizedBox(height: 10),
-                  Text(checkAnswerIsCorrect(widget.questionsAndAnswers, context,
-                      widget.questionsAndAnswers)['positive']),
+                  Text(checkedAnswersData['positive']),
                 ],
               ),
               padding: EdgeInsets.all(15),
@@ -84,8 +86,7 @@ class _ResultTabPageState extends State<ResultTabPage> {
                     style: TextStyle(color: Colors.redAccent),
                   ),
                   SizedBox(height: 10),
-                  Text(checkAnswerIsCorrect(widget.questionsAndAnswers, context,
-                      widget.questionsAndAnswers)['negative']),
+                  Text(checkedAnswersData['negative']),
                 ],
               ),
               padding: EdgeInsets.all(15),
@@ -100,7 +101,7 @@ class _ResultTabPageState extends State<ResultTabPage> {
         ),
         Container(
           child: Text(
-            'Total : ${checkAnswerIsCorrect(widget.questionsAndAnswers, context, widget.questionsAndAnswers)['total']}',
+            'Total : ${checkedAnswersData['total']}',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
@@ -126,10 +127,8 @@ class _ResultTabPageState extends State<ResultTabPage> {
                   SizedBox(width: 5),
                   Text('Correct Answer Time'),
                   SizedBox(width: 10),
-                  Text(timeConvertor(double.parse(checkAnswerIsCorrect(
-                      widget.questionsAndAnswers,
-                      context,
-                      widget.questionsAndAnswers)['positiveTime']))),
+                  Text(timeConvertor(
+                      double.parse(checkedAnswersData['positiveTime']))),
                 ],
               ),
               Row(
@@ -138,10 +137,8 @@ class _ResultTabPageState extends State<ResultTabPage> {
                   SizedBox(width: 5),
                   Text('Wrong Answer Time'),
                   SizedBox(width: 10),
-                  Text(timeConvertor(double.parse(checkAnswerIsCorrect(
-                      widget.questionsAndAnswers,
-                      context,
-                      widget.questionsAndAnswers)['negativeTime']))),
+                  Text(timeConvertor(
+                      double.parse(checkedAnswersData['negativeTime']))),
                 ],
               ),
             ],
@@ -157,39 +154,16 @@ class _ResultTabPageState extends State<ResultTabPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            buildMoreDetailsRow(
-                context,
-                'Guessed Correct',
-                checkAnswerIsCorrect(widget.questionsAndAnswers, context,
-                        widget.questionsAndAnswers)['guessedCorrect']
-                    .toString()),
-            buildMoreDetailsRow(
-                context,
-                'Guessed wrong',
-                checkAnswerIsCorrect(widget.questionsAndAnswers, context,
-                        widget.questionsAndAnswers)['guessedWrong']
-                    .toString()),
-            buildMoreDetailsRow(
-                context,
-                'Switched wrong to correct',
-                checkAnswerIsCorrect(widget.questionsAndAnswers, context,
-                            widget.questionsAndAnswers)['changedMap']
-                        ['wrongToCorrect']
-                    .toString()),
-            buildMoreDetailsRow(
-                context,
-                'Switched correct to wrong',
-                checkAnswerIsCorrect(widget.questionsAndAnswers, context,
-                            widget.questionsAndAnswers)['changedMap']
-                        ['correctToWrong']
-                    .toString()),
-            buildMoreDetailsRow(
-                context,
-                'Switched wrong to wrong',
-                checkAnswerIsCorrect(widget.questionsAndAnswers, context,
-                            widget.questionsAndAnswers)['changedMap']
-                        ['wrongToWrong']
-                    .toString()),
+            buildMoreDetailsRow(context, 'Guessed Correct',
+                checkedAnswersData['guessedCorrect'].toString()),
+            buildMoreDetailsRow(context, 'Guessed wrong',
+                checkedAnswersData['guessedWrong'].toString()),
+            buildMoreDetailsRow(context, 'Switched wrong to correct',
+                checkedAnswersData['changedMap']['wrongToCorrect'].toString()),
+            buildMoreDetailsRow(context, 'Switched correct to wrong',
+                checkedAnswersData['changedMap']['correctToWrong'].toString()),
+            buildMoreDetailsRow(context, 'Switched wrong to wrong',
+                checkedAnswersData['changedMap']['wrongToWrong'].toString()),
           ],
         ),
         SizedBox(height: 25),
@@ -208,8 +182,7 @@ Widget solutionsButton(var widget, BuildContext context, ThemeData theme) {
   saveResult(_docId, toSaveToDataBase, uid);
   return GestureDetector(
     onTap: () {
-      Map solutionDetails = checkAnswerIsCorrect(
-          widget.questionsAndAnswers, context, widget.questionsAndAnswers);
+      Map solutionDetails = checkedAnswersData;
       // print(toSaveToDataBase);
 
       Navigator.push(
@@ -236,8 +209,9 @@ Widget solutionsButton(var widget, BuildContext context, ThemeData theme) {
 
 Map toSaveToDataBase;
 
-Map checkAnswerIsCorrect(
-    List qNAnswers, BuildContext context, List questionsAndAnswers) {
+Map checkAnswerIsCorrect(BuildContext context, List questionsAndAnswers) {
+  print('qNAnswers');
+  print(questionsAndAnswers);
   // GlobalKey key = submitKey;
   BuildContext bcontext = context;
   List optionsSelected =
@@ -259,7 +233,8 @@ Map checkAnswerIsCorrect(
   };
   for (int i = 0; i < questionsAndAnswers.length; i++) {
 //    if answer is correct
-    if (qNAnswers[i]['answerIndex'] == optionsSelected[i]['selected']) {
+    if (questionsAndAnswers[i]['answerIndex'] ==
+        optionsSelected[i]['selected']) {
       var timeSpend = optionsSelected[i]['timeSpend'];
       positiveTime = positiveTime + optionsSelected[i]['timeSpend'];
       var toAdd = new Map.from(questionsAndAnswers[i])
@@ -277,7 +252,8 @@ Map checkAnswerIsCorrect(
     } else if (optionsSelected[i]['selected'] != -1) {
       var timeSpend = optionsSelected[i]['timeSpend'];
 
-      if (qNAnswers[i]['answerIndex'] != optionsSelected[i]['selected']) {
+      if (questionsAndAnswers[i]['answerIndex'] !=
+          optionsSelected[i]['selected']) {
         negativeTime = negativeTime + optionsSelected[i]['timeSpend'];
         var toAdd = new Map.from(questionsAndAnswers[i])
           ..addAll({'isCorrect': false, 'timeSpend': timeSpend});
@@ -291,7 +267,7 @@ Map checkAnswerIsCorrect(
       // check changed
       if (optionsSelected[i]['previousSelected'] != -1) {
         // if  answer == previous selected answer
-        if (qNAnswers[i]['answerIndex'] ==
+        if (questionsAndAnswers[i]['answerIndex'] ==
             optionsSelected[i]['previousSelected']) {
           changedOption['correctToWrong']++;
         } else {

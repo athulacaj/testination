@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:testination/homeScreen/drawer/profile.dart';
 import 'package:testination/provider/account.dart';
 import 'package:testination/screens/auth/phoneAuth/login.dart';
-
-import '../../themeProvider.dart';
+import 'package:testination/screens/homeScreen/drawer/profile.dart';
+import 'package:testination/themeProvider.dart';
 
 class MyDrawer extends StatelessWidget {
   @override

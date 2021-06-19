@@ -78,6 +78,16 @@ class QuestionAnswersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addOptionToAnswerListForMultipleChoice({List optionSelectedList}) {
+    if (answeredList[questionIndex]['selected'] != -1) {
+      answeredList[questionIndex]['previousSelected'] =
+          answeredList[questionIndex]['selected'];
+    }
+    answeredList[questionIndex]['selectedList'] = optionSelectedList;
+    answeredList[questionIndex]['question'] = questionIndex;
+    notifyListeners();
+  }
+
   void addTimeOfEachQuestion() {
     var time = answeredList[questionIndex]['timeSpend'];
     answeredList[questionIndex]['timeSpend'] = time + 1;

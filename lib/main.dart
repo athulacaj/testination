@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:testination/homeScreen/home.dart';
 import 'package:testination/provider/userEventsProvider.dart';
 import 'package:testination/screens/mockeTest/QuestionsPage/qusetionAnswerProvider.dart';
 import 'package:testination/screens/splashscreen.dart';
 import 'package:testination/themeProvider.dart';
 
 import 'provider/account.dart';
+import 'screens/homeScreen/home.dart';
 
 void main() {
   runApp(MultiProvider(
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Testination',
       theme: themeNotifier.getTheme(),
-      darkTheme: darkTheme,
+      // darkTheme: darkTheme,
       initialRoute: SplashScreenWindow.id,
       routes: {
         HomeScreen.id: (context) => HomeScreen(),

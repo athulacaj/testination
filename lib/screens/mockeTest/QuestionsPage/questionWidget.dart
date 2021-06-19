@@ -25,7 +25,8 @@ class QuestionAndOption extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     String question = questionAnswer['question'];
     List options = questionAnswer['options'];
-    int answerIndex = questionAnswer['answerIndex'];
+    // int answerIndex = questionAnswer['answerIndex'];
+    List answerIndexList = questionAnswer['answerIndex'].split(",");
     SectionMaker sectionMaker = SectionMaker(sectionList);
     Map sectionMap = {};
     if (sectionList != null) {
@@ -92,6 +93,10 @@ class QuestionAndOption extends StatelessWidget {
                                                               color: Colors
                                                                   .orange)),
                                                       onPressed: () {
+                                                        provider
+                                                            .addSectionViewed(
+                                                                sectionMap[
+                                                                    'i']);
                                                         Future<void> future =
                                                             showModalBottomSheet<
                                                                 void>(
@@ -116,10 +121,6 @@ class QuestionAndOption extends StatelessWidget {
                                                             );
                                                           },
                                                         );
-                                                        provider
-                                                            .addSectionViewed(
-                                                                sectionMap[
-                                                                    'i']);
                                                       },
                                                       child: Row(
                                                         children: [
@@ -130,7 +131,7 @@ class QuestionAndOption extends StatelessWidget {
                                                           SizedBox(width: 10),
                                                           Expanded(
                                                             child: Text(
-                                                              'Section $sectionMap)',
+                                                              'Section ${sectionMap['i']}',
                                                               style: TextStyle(
                                                                   fontSize: 16,
                                                                   fontWeight:
@@ -218,6 +219,7 @@ class QuestionAndOption extends StatelessWidget {
                               selectedIndex: _selectedIndex,
                               options: options,
                               qNo: qNo,
+                              answerIndexList: answerIndexList,
                             ),
                           ),
                         ],

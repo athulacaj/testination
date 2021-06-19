@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:testination/brain/brain.dart';
 import 'package:testination/database/testTakingPage/save&DeleteUserQuestion.dart';
 import 'package:testination/provider/account.dart';
 import 'package:testination/screens/mockeTest/QuestionsPage/questionsIndex.dart';
@@ -27,12 +28,15 @@ class TestPage extends StatefulWidget {
 }
 
 bool _showSpinner = false;
+Map testInfo;
 
 class _TestPageState extends State<TestPage> {
   @override
   void initState() {
     _showSpinner = false;
     super.initState();
+    testInfo = widget.testInfo;
+    testInfo = adminUPSCRACESOLUTIONS['tests'][0];
   }
 
   @override
@@ -70,13 +74,13 @@ class _TestPageState extends State<TestPage> {
                       children: <Widget>[
                         SizedBox(height: 10),
                         Text(
-                          '${widget.testInfo['name']}',
+                          '${testInfo['name']}',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                         SizedBox(height: 6),
                         Text(
-                          '${widget.testInfo['questions']} Questions',
+                          '${testInfo['questions']} Questions',
                           style: TextStyle(
                               fontSize: 16,
                               color: widget.theme.accentColor.withOpacity(0.5),
@@ -84,7 +88,7 @@ class _TestPageState extends State<TestPage> {
                         ),
                         SizedBox(height: 6),
                         Text(
-                          'Duration ${secondsConvertor(widget.testInfo['duration'])}',
+                          'Duration ${secondsConvertor(testInfo['duration'])}',
                           style: TextStyle(
                               fontSize: 16,
                               color: widget.theme.accentColor.withOpacity(0.5),
@@ -105,7 +109,7 @@ class _TestPageState extends State<TestPage> {
               onTap: () async {
                 _showSpinner = true;
                 setState(() {});
-                String test = widget.testInfo['name'];
+                String test = testInfo['name'];
                 String name = widget.bundleName;
                 String uid = Provider.of<MyAccount>(context, listen: false)
                     .userDetails['uid'];
@@ -129,7 +133,7 @@ class _TestPageState extends State<TestPage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => QuestionsPage(
-                        testDetails: widget.testInfo,
+                        testDetails: testInfo,
                         bundleName: widget.bundleName,
                         category: widget.category,
                       ),
